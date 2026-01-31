@@ -1,3 +1,4 @@
+import AdBanner from '@/components/ad-banner';
 import EligibilityChecker from '@/components/eligibility-checker';
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
           </p>
         </div>
         <EligibilityChecker />
+        <AdBanner />
       </div>
     </div>
   );
