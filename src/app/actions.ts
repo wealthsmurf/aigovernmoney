@@ -1,21 +1,21 @@
 "use server";
 
 import * as z from 'zod';
-import { determineSubsidyEligibility, SubsidyEligibilityOutput } from '@/ai/flows/determine-subsidy-eligibility';
+import { findSubsidies, FindSubsidiesOutput } from '@/ai/flows/find-subsidies';
 
 const formSchema = z.object({
   age: z.coerce.number().min(1),
   residence: z.string().min(1),
   monthlyIncome: z.coerce.number().min(0),
-  housingType: z.string().min(1),
+  interests: z.string().min(1, { message: '관심분야를 입력해주세요.' }),
 });
 
 export async function checkEligibilityAction(
   values: z.infer<typeof formSchema>
-): Promise<{ data: SubsidyEligibilityOutput | null; error: string | null }> {
+): Promise<{ data: FindSubsidiesOutput | null; error: string | null }> {
   try {
     const validatedData = formSchema.parse(values);
-    const result = await determineSubsidyEligibility(validatedData);
+    const result = await findSubsidies(validatedData);
     return { data: result, error: null };
   } catch (e) {
     if (e instanceof z.ZodError) {

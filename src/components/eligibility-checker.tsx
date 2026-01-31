@@ -22,30 +22,24 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { checkEligibilityAction } from '@/app/actions';
-import type { SubsidyEligibilityOutput } from '@/ai/flows/determine-subsidy-eligibility';
+import type { FindSubsidiesOutput } from '@/ai/flows/find-subsidies';
+import { Textarea } from '@/components/ui/textarea';
 
 const formSchema = z.object({
   age: z.coerce.number().min(1, { message: '나이를 입력해주세요.' }),
   residence: z.string().min(1, { message: '거주지를 입력해주세요.' }),
   monthlyIncome: z.coerce.number().min(0, { message: '월 소득을 입력해주세요.' }),
-  housingType: z.string().min(1, { message: '주거 형태를 선택해주세요.' }),
+  interests: z.string().min(1, { message: '관심분야를 한 가지 이상 입력해주세요.' }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export default function EligibilityChecker() {
   const [isPending, startTransition] = useTransition();
-  const [result, setResult] = useState<SubsidyEligibilityOutput | null>(null);
+  const [result, setResult] = useState<FindSubsidiesOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
@@ -54,7 +48,7 @@ export default function EligibilityChecker() {
       age: 28,
       residence: '서울특별시',
       monthlyIncome: 2500000,
-      housingType: '월세',
+      interests: '주거, 취업',
     },
   });
 
@@ -112,7 +106,7 @@ export default function EligibilityChecker() {
                 control={form.control}
                 name="monthlyIncome"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="md:col-span-2">
                     <FormLabel>Monthly Income (KRW) / 월 소득 (원)</FormLabel>
                     <FormControl>
                       <Input
@@ -130,26 +124,19 @@ export default function EligibilityChecker() {
               />
               <FormField
                 control={form.control}
-                name="housingType"
+                name="interests"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Housing Type / 주거 형태</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select housing type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="월세">월세 (Monthly Rent)</SelectItem>
-                        <SelectItem value="전세">전세 (Jeonse)</SelectItem>
-                        <SelectItem value="자가">자가 (Owner-occupied)</SelectItem>
-                        <SelectItem value="기타">기타 (Other)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>Areas of Interest / 관심 분야</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="e.g., 주거, 창업, 취업, 교육"
+                        {...field}
+                      />
+                    </FormControl>
+                     <FormDescription>
+                      What kind of support are you looking for? (e.g., housing, startup, employment, education)
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -214,7 +201,7 @@ export default function EligibilityChecker() {
                     ? 'Congratulations!'
                     : 'Eligibility Unlikely'}
                 </h3>
-                <p className="text-lg text-foreground/90">
+                <p className="text-lg text-foreground/90 whitespace-pre-wrap">
                   {result.subsidyDetails}
                 </p>
 
@@ -225,7 +212,7 @@ export default function EligibilityChecker() {
                         <h4 className="font-headline text-xl font-bold">
                             신청 방법 (How to Apply)
                         </h4>
-                        <p className="text-foreground/90">{result.applicationMethod}</p>
+                        <p className="text-foreground/90 whitespace-pre-wrap">{result.applicationMethod}</p>
                         
                         {result.requiredDocuments && result.requiredDocuments.length > 0 && (
                             <div className="text-left p-4 border rounded-md bg-card max-w-md mx-auto">

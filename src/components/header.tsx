@@ -10,7 +10,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2">
             <Building2 className="h-8 w-8 text-primary" />
             <span className="font-headline text-xl font-bold text-primary">
-              Youth Housing Navigator
+              Youth Subsidy Navigator
             </span>
           </Link>
           <nav className="flex items-center gap-1 sm:gap-2">

@@ -6,14 +6,14 @@ export default function Home() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 text-center">
           <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl">
-            Youth Housing Subsidy
+            Youth Subsidy Finder
           </h1>
           <p className="mt-4 text-lg text-foreground/80">
-            Check if you're eligible for housing support in minutes. Just enter
+            Check which government subsidies you're eligible for in minutes. Just enter
             your details below.
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            청년 주거 지원금 자격이 되는지 몇 분 안에 확인해 보세요. 아래에
+            어떤 정부 지원금을 받을 수 있는지 몇 분 만에 확인해 보세요. 아래에
             정보를 입력하기만 하면 됩니다.
           </p>
         </div>

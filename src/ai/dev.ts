@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/determine-subsidy-eligibility.ts';
-import '@/ai/flows/summarize-housing-policy-blog.ts';
+import '@/ai/flows/find-subsidies.ts';
+import '@/ai/flows/summarize-policy-blog.ts';
