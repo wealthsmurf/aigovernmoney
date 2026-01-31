@@ -1,1 +1,5 @@
-// Flows will be imported for their side effects in this file.
+import { config } from 'dotenv';
+config();
+
+import '@/ai/flows/determine-subsidy-eligibility.ts';
+import '@/ai/flows/summarize-housing-policy-blog.ts';
