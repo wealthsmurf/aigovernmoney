@@ -6,7 +6,7 @@ import Header from '@/components/header';
 export const metadata: Metadata = {
   title: '청년 지원금 내비게이터 | AI 정부 지원금 자격 조회',
   description: 'AI로 간편하게 청년 지원금 자격 확인! 나이, 소득, 관심분야 정보만으로 나에게 맞는 정부 지원, 보조금, 대출 등 다양한 정책을 찾아보세요. 복잡한 정책도 AI가 쉽게 요약해드립니다.',
-  keywords: ['청년 지원금', '정부 지원금', '보조금', '지원금 받는법', 'AI', '주거 지원', '취업 지원', '창업 지원', '월세 지원', '전세 대출', '주택 청약', '주거 안정', '청년 월세 지원', '주거비 지원', '청년 주택'],
+  keywords: ['청년 지원금', '정부 지원금', '보조금', '지원금 받는법', 'AI', '주거 지원', '취업 지원', '창업 지원', '월세 지원', '전세 대출', '주택 청약', '주거 안정', '청년 월세 지원', '주거비 지원', '청년 주택', 'youth subsidy', 'government support', 'korea subsidy', 'financial aid for youth', 'AI eligibility checker', 'housing support', 'employment support', 'startup grant'],
   openGraph: {
     title: '청년 지원금 내비게이터 | AI 정부 지원금 자격 조회',
     description: 'AI로 간편하게 청년 지원금 자격 확인! 나에게 맞는 정부 정책을 찾아보세요.',

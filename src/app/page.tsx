@@ -13,8 +13,7 @@ export default function Home() {
             your details below.
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            어떤 정부 지원금을 받을 수 있는지 몇 분 만에 확인해 보세요. 아래에
-            정보를 입력하기만 하면 됩니다.
+            지원금 자격이 되는지 몇 분 안에 확인해 보세요. 아래에 정보를 입력하기만 하면 됩니다.
           </p>
         </div>
         <EligibilityChecker />
