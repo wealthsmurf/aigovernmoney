@@ -22,6 +22,9 @@ export type SubsidyEligibilityInput = z.infer<typeof SubsidyEligibilityInputSche
 const SubsidyEligibilityOutputSchema = z.object({
   eligible: z.boolean().describe('Whether the user is likely eligible for youth housing subsidy.'),
   subsidyDetails: z.string().describe('Details about the subsidy the user is eligible for.'),
+  applicationMethod: z.string().describe('How to apply for the subsidy (e.g., online application, visit community center).'),
+  requiredDocuments: z.array(z.string()).describe('A list of required documents for the application.'),
+  applicationUrl: z.string().optional().describe('The URL to the online application page, if available.'),
 });
 export type SubsidyEligibilityOutput = z.infer<typeof SubsidyEligibilityOutputSchema>;
 
@@ -38,7 +41,8 @@ const prompt = ai.definePrompt({
   prompt: `You are an expert in Korean youth housing subsidies.
 
   Based on the user's information, determine if they are likely eligible for any youth housing subsidies. Consider the age, residence, monthly income, and housing type of the user. Check if the user meets the requirements for 청년 월세 지원 정책, which generally requires applicants to be between 19 and 34 years old and have an income below 60% of the median income.
-  Return details of the subsidy along with the monetary amount the user is eligible to receive.
+  
+  If the user is eligible, provide details about the subsidy including the monetary amount, how to apply (applicationMethod), a list of required documents, and a URL for the application if available.
 
   User Age: {{{age}}}
   User Residence: {{{residence}}}

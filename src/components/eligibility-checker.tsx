@@ -225,35 +225,39 @@ export default function EligibilityChecker() {
                         <h4 className="font-headline text-xl font-bold">
                             신청 방법 (How to Apply)
                         </h4>
-                        <div className="text-left p-4 border rounded-md bg-card max-w-md mx-auto">
-                            <h5 className="font-semibold mb-2 flex items-center gap-2">
-                                <BookOpenCheck className="h-5 w-5 text-primary" />
-                                필요한 서류 (Required Documents)
-                            </h5>
-                            <ul className="list-disc list-inside space-y-2 text-foreground/80 pl-2">
-                                <li>확약서 (Pledge)</li>
-                                <li>임대차계약서 (Lease Agreement)</li>
-                                <li>월세이체증 (Proof of Rent Payment)</li>
-                                <li>소득증빙서류 (Proof of Income)</li>
-                                <li>가족관계증명서 (Family Relation Certificate)</li>
-                            </ul>
-                            <p className="text-xs mt-3 text-muted-foreground">
-                                * 필요 서류는 정책에 따라 달라질 수 있습니다. 방문 전 공식 사이트에서 확인하세요.
-                            </p>
-                        </div>
-                        <Button
-                            asChild
-                            className="w-full bg-accent text-accent-foreground font-bold hover:bg-accent/90 sm:w-auto transition-transform active:scale-[0.98]"
-                            >
-                            <a
-                                href="https://www.bokjiro.go.kr"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                신청 사이트로 바로가기
-                                <ArrowRight className="ml-2 h-4 w-4" />
-                            </a>
-                        </Button>
+                        <p className="text-foreground/90">{result.applicationMethod}</p>
+                        
+                        {result.requiredDocuments && result.requiredDocuments.length > 0 && (
+                            <div className="text-left p-4 border rounded-md bg-card max-w-md mx-auto">
+                                <h5 className="font-semibold mb-2 flex items-center gap-2">
+                                    <BookOpenCheck className="h-5 w-5 text-primary" />
+                                    필요한 서류 (Required Documents)
+                                </h5>
+                                <ul className="list-disc list-inside space-y-2 text-foreground/80 pl-2">
+                                    {result.requiredDocuments.map((doc, index) => (
+                                      <li key={index}>{doc}</li>
+                                    ))}
+                                </ul>
+                                <p className="text-xs mt-3 text-muted-foreground">
+                                    * 필요 서류는 정책에 따라 달라질 수 있습니다. 방문 전 공식 사이트에서 확인하세요.
+                                </p>
+                            </div>
+                        )}
+                        {result.applicationUrl && (
+                          <Button
+                              asChild
+                              className="w-full bg-accent text-accent-foreground font-bold hover:bg-accent/90 sm:w-auto transition-transform active:scale-[0.98]"
+                              >
+                              <a
+                                  href={result.applicationUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                              >
+                                  신청 사이트로 바로가기
+                                  <ArrowRight className="ml-2 h-4 w-4" />
+                              </a>
+                          </Button>
+                        )}
                     </div>
                   </>
                 )}
