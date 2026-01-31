@@ -1,6 +1,15 @@
-import { summarizeHousingPolicyBlog } from '@/ai/flows/summarize-housing-policy-blog';
+import {
+  summarizeHousingPolicyBlog,
+  type SummarizeHousingPolicyBlogOutput,
+} from '@/ai/flows/summarize-housing-policy-blog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, BookText, CheckCircle, List } from 'lucide-react';
+import {
+  AlertCircle,
+  BookText,
+  CheckCircle,
+  List,
+  AlertTriangle,
+} from 'lucide-react';
 
 // Dummy content for the summarizer. In a real app, this would come from a CMS or database.
 const articleContent = `
@@ -10,7 +19,15 @@ To apply, several documents are required: a completed application form, a signed
 `;
 
 export default async function BlogPage() {
-  const summaryData = await summarizeHousingPolicyBlog({ articleContent });
+  let summaryData: SummarizeHousingPolicyBlogOutput | null = null;
+  let error: string | null = null;
+
+  try {
+    summaryData = await summarizeHousingPolicyBlog({ articleContent });
+  } catch (e) {
+    console.error(e);
+    error = 'Could not generate summary due to high traffic. Please try again later.';
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -26,56 +43,75 @@ export default async function BlogPage() {
             </p>
           </CardHeader>
           <CardContent className="space-y-8">
-            <div>
-              <h2 className="mb-4 flex items-center gap-2 border-b pb-2 font-headline text-2xl font-semibold">
-                Summary / 정책 요약
-              </h2>
-              <p className="text-lg leading-relaxed">{summaryData.summary}</p>
-            </div>
-
-            <div>
-              <h2 className="mb-4 flex items-center gap-2 border-b pb-2 font-headline text-2xl font-semibold">
-                <List className="text-primary" /> Key Points / 핵심 사항
-              </h2>
-              <ul className="list-inside space-y-3">
-                {summaryData.keyPoints.map((point, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle className="mt-1 h-5 w-5 flex-shrink-0 text-green-600" />
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="mb-4 flex items-center gap-2 border-b pb-2 font-headline text-2xl font-semibold">
-                <BookText className="text-primary" />
-                신청 시 필요한 서류
-              </h2>
-              <ul className="list-disc list-inside space-y-2 text-foreground/80">
-                <li>확약서 (Pledge)</li>
-                <li>임대차계약서 (Lease Agreement)</li>
-                <li>월세이체증 (Proof of Rent Payment)</li>
-                <li>소득증빙서류 (Proof of Income)</li>
-                <li>가족관계증명서 (Family Relation Certificate)</li>
-              </ul>
-            </div>
-
-            <Card className="border-accent/50 bg-accent/20">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="mt-1 h-6 w-6 text-accent-foreground" />
-                  <div>
-                    <h3 className="font-headline font-bold text-accent-foreground">
-                      꿀팁 (Pro Tip)
-                    </h3>
-                    <p className="text-accent-foreground/90">
-                      {summaryData.tips}
-                    </p>
+            {error && (
+              <Card className="border-destructive bg-destructive/10 text-destructive-foreground">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="h-6 w-6 text-destructive" />
+                    <div>
+                      <p className="font-bold">An error occurred</p>
+                      <p className="text-sm">{error}</p>
+                    </div>
                   </div>
+                </CardContent>
+              </Card>
+            )}
+            {summaryData && (
+              <>
+                <div>
+                  <h2 className="mb-4 flex items-center gap-2 border-b pb-2 font-headline text-2xl font-semibold">
+                    Summary / 정책 요약
+                  </h2>
+                  <p className="text-lg leading-relaxed">
+                    {summaryData.summary}
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+
+                <div>
+                  <h2 className="mb-4 flex items-center gap-2 border-b pb-2 font-headline text-2xl font-semibold">
+                    <List className="text-primary" /> Key Points / 핵심 사항
+                  </h2>
+                  <ul className="list-inside space-y-3">
+                    {summaryData.keyPoints.map((point, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <CheckCircle className="mt-1 h-5 w-5 flex-shrink-0 text-green-600" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h2 className="mb-4 flex items-center gap-2 border-b pb-2 font-headline text-2xl font-semibold">
+                    <BookText className="text-primary" />
+                    신청 시 필요한 서류
+                  </h2>
+                  <ul className="list-disc list-inside space-y-2 text-foreground/80">
+                    <li>확약서 (Pledge)</li>
+                    <li>임대차계약서 (Lease Agreement)</li>
+                    <li>월세이체증 (Proof of Rent Payment)</li>
+                    <li>소득증빙서류 (Proof of Income)</li>
+                    <li>가족관계증명서 (Family Relation Certificate)</li>
+                  </ul>
+                </div>
+
+                <Card className="border-accent/50 bg-accent/20">
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="mt-1 h-6 w-6 text-accent-foreground" />
+                      <div>
+                        <h3 className="font-headline font-bold text-accent-foreground">
+                          꿀팁 (Pro Tip)
+                        </h3>
+                        <p className="text-accent-foreground/90">
+                          {summaryData.tips}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
