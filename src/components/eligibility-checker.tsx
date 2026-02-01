@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   LoaderCircle,
   BookOpenCheck,
+  ListOrdered,
 } from 'lucide-react';
 
 import {
@@ -24,6 +25,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+
 import { checkEligibilityAction } from '@/app/actions';
 import type { FindSubsidiesOutput } from '@/ai/flows/find-subsidies';
 import { Textarea } from '@/components/ui/textarea';
@@ -184,53 +192,89 @@ export default function EligibilityChecker() {
         )}
 
         {result && (
-          <Card
-            className={`mt-6 ${
-              result.eligible ? 'border-primary bg-primary/5' : 'bg-secondary'
-            }`}
-          >
-            <CardContent className="p-6">
-              <div className="flex flex-col items-center gap-4 text-center">
-                {result.eligible ? (
-                  <PartyPopper className="h-12 w-12 text-primary" />
-                ) : (
-                  <AlertTriangle className="h-12 w-12 text-muted-foreground" />
-                )}
-                <h3 className="font-headline text-2xl font-bold">
-                  {result.eligible
-                    ? 'Congratulations!'
-                    : 'Eligibility Unlikely'}
-                </h3>
-                <p className="text-lg text-foreground/90 whitespace-pre-wrap">
-                  {result.subsidyDetails}
-                </p>
+          <div className="mt-6">
+            {result.eligible ? (
+              <Card className="border-primary bg-primary/5">
+                <CardHeader className="text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <PartyPopper className="h-12 w-12 text-primary" />
+                    <CardTitle className="font-headline text-2xl">
+                      Congratulations! You might be eligible.
+                    </CardTitle>
+                    <p className="text-muted-foreground">
+                      아래에서 지원금 목록과 가장 관련성 높은 지원금의 신청 방법을 확인해보세요.
+                    </p>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* List of eligible subsidies */}
+                  {result.subsidies && result.subsidies.length > 0 && (
+                    <div>
+                      <h3 className="mb-4 text-xl font-bold font-headline text-center">
+                        신청 가능한 지원금 목록
+                      </h3>
+                      <Accordion type="single" collapsible className="w-full">
+                        {result.subsidies.map((subsidy, index) => (
+                          <AccordionItem value={`item-${index}`} key={index}>
+                            <AccordionTrigger className="font-semibold text-lg hover:no-underline text-left">
+                              {subsidy.name}
+                            </AccordionTrigger>
+                            <AccordionContent className="space-y-2 px-2 text-left">
+                              <p className="text-foreground/90">{subsidy.description}</p>
+                              <p className="text-sm text-muted-foreground">
+                                <strong>주관 기관:</strong> {subsidy.agency}
+                              </p>
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                    </div>
+                  )}
 
-                {result.eligible && (
-                  <>
-                    <div className="w-full border-t my-4"></div>
-                    <div className="w-full text-center space-y-4">
-                        <h4 className="font-headline text-xl font-bold">
-                            신청 방법 (How to Apply)
-                        </h4>
-                        <p className="text-foreground/90 whitespace-pre-wrap">{result.applicationMethod}</p>
-                        
-                        {result.requiredDocuments && result.requiredDocuments.length > 0 && (
-                            <div className="text-left p-4 border rounded-md bg-card max-w-md mx-auto">
-                                <h5 className="font-semibold mb-2 flex items-center gap-2">
-                                    <BookOpenCheck className="h-5 w-5 text-primary" />
-                                    필요한 서류 (Required Documents)
-                                </h5>
-                                <ul className="list-disc list-inside space-y-2 text-foreground/80 pl-2">
-                                    {result.requiredDocuments.map((doc, index) => (
-                                      <li key={index}>{doc}</li>
-                                    ))}
-                                </ul>
-                                <p className="text-xs mt-3 text-muted-foreground">
-                                    * 필요 서류는 정책에 따라 달라질 수 있습니다. 방문 전 공식 사이트에서 확인하세요.
-                                </p>
-                            </div>
-                        )}
-                        {result.applicationUrl && (
+                  <div className="w-full border-t my-6"></div>
+
+                  {/* Application details for the most relevant subsidy */}
+                  {result.mostRelevantSubsidyName && (
+                    <div className="space-y-4 text-left">
+                      <h3 className="font-headline text-xl font-bold text-center">
+                        ✅ {result.mostRelevantSubsidyName}
+                        <br />
+                        <span className="text-lg">상세 신청 방법</span>
+                      </h3>
+                      
+                      {result.applicationMethod && result.applicationMethod.length > 0 && (
+                        <div className="p-4 bg-card rounded-lg border">
+                          <h4 className="font-semibold mb-3 flex items-center gap-2">
+                            <ListOrdered className="h-5 w-5 text-primary" />
+                            신청 절차 (Application Steps)
+                          </h4>
+                          <ol className="list-decimal list-inside space-y-3 pl-2 text-foreground/90">
+                            {result.applicationMethod.map((step, index) => (
+                              <li key={index}>{step}</li>
+                            ))}
+                          </ol>
+                        </div>
+                      )}
+
+                      {result.requiredDocuments && result.requiredDocuments.length > 0 && (
+                          <div className="p-4 bg-card rounded-lg border">
+                              <h4 className="font-semibold mb-3 flex items-center gap-2">
+                                  <BookOpenCheck className="h-5 w-5 text-primary" />
+                                  필요 서류 (Required Documents)
+                              </h4>
+                              <ul className="list-disc list-inside space-y-2 text-foreground/80 pl-2">
+                                  {result.requiredDocuments.map((doc, index) => (
+                                    <li key={index}>{doc}</li>
+                                  ))}
+                              </ul>
+                              <p className="text-xs mt-3 text-muted-foreground">
+                                  * 필요 서류는 정책에 따라 달라질 수 있습니다. 방문 전 공식 사이트에서 확인하세요.
+                              </p>
+                          </div>
+                      )}
+
+                      {result.applicationUrl && (
+                        <div className="text-center pt-4">
                           <Button
                               asChild
                               className="w-full bg-accent text-accent-foreground font-bold hover:bg-accent/90 sm:w-auto transition-transform active:scale-[0.98]"
@@ -244,13 +288,33 @@ export default function EligibilityChecker() {
                                   <ArrowRight className="ml-2 h-4 w-4" />
                               </a>
                           </Button>
-                        )}
+                        </div>
+                      )}
                     </div>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="mt-6 bg-secondary">
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center gap-4 text-center">
+                    <AlertTriangle className="h-12 w-12 text-muted-foreground" />
+                    <h3 className="font-headline text-2xl font-bold">
+                      아쉽지만, 해당되는 지원금을 찾지 못했습니다.
+                    </h3>
+                    {result.notEligibleReason && (
+                      <p className="text-lg text-foreground/90">
+                        {result.notEligibleReason}
+                      </p>
+                    )}
+                    <p className="text-sm text-muted-foreground pt-4">
+                      입력 정보를 다시 확인하시거나, 나중에 다시 시도해주세요. 정부 정책은 계속 업데이트됩니다.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         )}
       </CardContent>
     </Card>
